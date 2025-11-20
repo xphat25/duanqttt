@@ -11,9 +11,9 @@ if (empty($url)) {
 }
 
 // 2. Cấu hình lệnh chạy Python trên Linux (aaPanel)
-// Lưu ý: Dùng 'python3' thay vì 'python'
-// escapeshellarg giúp bảo mật, tránh người dùng nhập lệnh nguy hiểm
-$command = "python3 scraper.py " . escapeshellarg($url) . " 2>&1";
+// Chuyển hướng lỗi (2>&1) có thể làm lẫn lộn JSON trả về. 
+// Tốt nhất chỉ lấy stdout, còn log lỗi nên ghi vào file riêng trong Python.
+$command = "python3 scraper.py " . escapeshellarg($url);
 
 // 3. Thực thi lệnh
 $output = shell_exec($command);
