@@ -23,10 +23,7 @@ if (!$scraperDir) {
     exit;
 }
 
-// 🔥 Python.exe của bạn (Python Launcher)
 $python = "python";
-
-$cmd = null;
 
 if (strpos($domain, "tiki.vn") !== false) {
     $cmd = "\"$python\" \"$scraperDir/scraper_tiki.py\" $escapedUrl";
@@ -35,19 +32,17 @@ elseif (strpos($domain, "shopee") !== false) {
     $cmd = "\"$python\" \"$scraperDir/scraper_shopee.py\" $escapedUrl";
 }
 elseif (strpos($domain, "sieuthiyte") !== false) {
-    // Dùng scraper.py (Selenium) thay vì scraper_beauti.py (Requests)
     $cmd = "\"$python\" \"$scraperDir/scraper.py\" $escapedUrl";
 }
 else {
-    // fallback beauti
     $cmd = "\"$python\" \"$scraperDir/scraper_beauti.py\" $escapedUrl";
 }
-
 
 // ===============================
 // 3. Gọi Python
 // ===============================
-$output = shell_exec($cmd . " 2>&1");   // lấy cả stderr
+// ❗ KHÔNG redirect stderr ⇒ tránh log Selenium phá JSON
+$output = shell_exec($cmd);
 
 if (!$output) {
     echo json_encode([
@@ -58,13 +53,16 @@ if (!$output) {
     exit;
 }
 
-// Giải mã JSON
-$data = json_decode($output, true);
+// Lọc sạch mọi log rác trước JSON
+$outputClean = trim(preg_replace('/^[^{[]+/', '', $output));
+
+$data = json_decode($outputClean, true);
 
 if (!is_array($data)) {
     echo json_encode([
         "error" => "Invalid JSON returned from Python",
         "raw"   => $output,
+        "clean" => $outputClean,
         "cmd"   => $cmd
     ]);
     exit;
@@ -78,7 +76,6 @@ if (strpos($domain, "tiki") !== false)          $platform_code = "tiki";
 elseif (strpos($domain, "shopee") !== false)     $platform_code = "shopee";
 elseif (strpos($domain, "sieuthiyte") !== false) $platform_code = "sieuthiyte";
 
-// Kiểm tra hoặc thêm platform
 $stmt = $conn->prepare("SELECT id FROM platforms WHERE code = ?");
 $stmt->bind_param("s", $platform_code);
 $stmt->execute();
@@ -96,14 +93,14 @@ if ($stmt->num_rows > 0) {
 $stmt->close();
 
 // ===============================
-// 5. Normalize key
+// 5. Normalize
 // ===============================
 function normalize_key($str) {
     return preg_replace('/[^a-z0-9]+/', '-', strtolower($str));
 }
 
 // ===============================
-// 6. SQL insert/update
+// 6. SQL
 // ===============================
 $sql = "
 INSERT INTO products
@@ -124,7 +121,7 @@ ON DUPLICATE KEY UPDATE
 $stmt_product = $conn->prepare($sql);
 
 // ===============================
-// 7. Lưu từng item
+// 7. Lưu dữ liệu
 // ===============================
 foreach ($data as $item) {
 
@@ -156,7 +153,6 @@ foreach ($data as $item) {
     );
     $stmt_product->execute();
 
-    // lấy ID
     $product_id = $conn->insert_id;
     if (!$product_id) {
         $q = $conn->query("SELECT id FROM products WHERE product_url='$url2' AND platform_id=$platform_id");
@@ -180,7 +176,7 @@ foreach ($data as $item) {
 }
 
 // ===============================
-// 8. Trả JSON cho FE
+// 8. Trả JSON cho frontend
 // ===============================
 echo json_encode($data, JSON_UNESCAPED_UNICODE);
 
