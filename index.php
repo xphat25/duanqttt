@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -31,8 +32,7 @@ window.addEventListener("message", function(e) {
 <header class="site-header">
     <div class="header-container">
         <div class="logo-area">
-            <div class="logo-dot"></div>
-            <h1 class="logo-text">Scraper Tool</h1>
+            <img class='logo-image' src="assets/images/logo.png" alt="Logo Website">
         </div>
 
         <!-- ⭐ NEW MENU -->
@@ -40,9 +40,8 @@ window.addEventListener("message", function(e) {
             <ul class="nav-links">
                 <li class="nav-item active" data-tab="tab-scraper">Scraper</li>
                 <li class="nav-item" data-tab="tab-products">Products</li>
-                <li class="nav-item" data-tab="tab-search">Search</li>
                 <li class="nav-item" data-tab="tab-compare">Compare</li>
-                <li class="nav-item" onclick="window.location='admin/login.php'" style="cursor:pointer;">Admin</li>
+                <li class="nav-item" onclick="window.location='admin/login.php'" style="cursor:pointer;">Login</li>
             </ul>
         </nav>
     </div>
@@ -146,33 +145,6 @@ document.querySelectorAll(".nav-item[data-tab]").forEach(btn => {
     });
 });
 </script>
-
-<style>
-.nav-links {
-    display: flex;
-    gap: 20px;
-    list-style: none;
-}
-.nav-item {
-    cursor: pointer;
-    font-weight: 500;
-    padding: 8px 12px;
-}
-.nav-item.active {
-    border-bottom: 2px solid black;
-}
-
-.iframe-page {
-    width: 100%;
-    height: 80vh;
-    border: none;
-    margin-top: 20px;
-}
-
-.tab-page.hidden {
-    display: none;
-}
-</style>
 
 </body>
 </html>
