@@ -30,8 +30,10 @@ button {
     width: 100%;
     padding: 12px;
     border: none;
-    background: black;
-    color: white;
+    /* Dùng biến CSS --primary (được định nghĩa trong style.css) */
+    background: var(--primary, black); 
+    /* Dùng biến CSS --primary-text */
+    color: var(--primary-text, white); 
     font-weight: 600;
     border-radius: 8px;
     cursor: pointer;
