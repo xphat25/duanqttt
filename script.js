@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // ⭐ FIX QUAN TRỌNG — DÙNG ĐƯỜNG DẪN TUYỆT ĐỐI ⭐
-            const response = await fetch(`http://localhost/duanqttt/api/api.php?url=${encodeURIComponent(url)}`);
+            const response = await fetch(`https://nhom30.itimit.id.vn/duanqttt/api/api.php?url=${encodeURIComponent(url)}`);
 
             if (!response.ok) {
                 throw new Error(`Connection Error: ${response.status} ${response.statusText}`);
